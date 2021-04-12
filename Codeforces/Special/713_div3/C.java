@@ -31,49 +31,35 @@ public class C {
         }
         if (a < 0 || b < 0) flag = false;
       } else {
-        for (int i = 0; i < n / 2; i++) {
-          if (s[i] == '?' && s[n - i - 1] == '?') {
-            if (a > b) {
-              // use 0
-              s[i] = '0';
-              s[n - i - 1] = '0'; 
-              a -= 2;
-            } else {
-              // use 1
-              s[i] = '1';
-              s[n - i - 1] = '1';
-              b -= 2;
-            }
-          } else {
+        for (int i = 0; i < n / 2; i++) { 
             // assign the partners value
-            if (s[i] != '?' && s[n - i - 1] != '?') {
-              if (s[i] != s[n - i - 1]) {
-                flag = false;
-                break;
-              } else {
-                if (s[i] == '0') {
-                  a -= 2;
-                } else {
-                  b -= 2;
-                }
-              }     
+          if (s[i] != '?' && s[n - i - 1] != '?') {
+            if (s[i] != s[n - i - 1]) {
+              flag = false;
+              break;
             } else {
-              if (s[i] == '?') {
-                if (s[n - i - 1] == '0') {
-                  a -= 2;
-                  s[i] = '0';
-                } else {
-                  b -= 2;
-                  s[i] = '1';
-                }
+              if (s[i] == '0') {
+                a -= 2;
               } else {
-                if (s[i] == '0') {
-                  a -= 2;
-                  s[n - i - 1] = '0';
-                } else {
-                  b -= 2;
-                  s[n - i - 1] = '1';
-                }
+                b -= 2;
+              }
+            }     
+          } else if (s[i] == '?' ^ s[n - i - 1] == '?') {
+            if (s[i] == '?') {
+              if (s[n - i - 1] == '0') {
+                a -= 2;
+                s[i] = '0';
+              } else {
+                b -= 2;
+                s[i] = '1';
+              }
+            } else {
+              if (s[i] == '0') {
+                a -= 2;
+                s[n - i - 1] = '0';
+              } else {
+                b -= 2;
+                s[n - i - 1] = '1';
               }
             }
           }
@@ -83,6 +69,23 @@ public class C {
             break;
           }
         }
+
+        for (int j = 0; j < s.length / 2; j++) {
+          if (s[j] == '?' && s[n - j - 1] == '?') {
+            if (a > b) {
+              // use 0
+              s[j] = '0';
+              s[n - j - 1] = '0'; 
+              a -= 2;
+            } else {
+              // use 1
+              s[j] = '1';
+              s[n - j - 1] = '1';
+              b -= 2;
+            }
+          }        
+        }
+
         // check for odd and count the middle character
         if (n % 2 != 0) {
           if (s[(n/2)] == '1') b--;
@@ -103,6 +106,11 @@ public class C {
         }
       }
 
+      if (a < 0 || b < 0) {
+        flag = false;
+      }
+
+
       if (!flag || a != 0 || b != 0) {
         pr.println(-1);
       } else {
@@ -111,6 +119,8 @@ public class C {
         }
         pr.print("\n");
       }
+
+      // System.out.println(a + " " + b);
     }
 
     pr.close();
