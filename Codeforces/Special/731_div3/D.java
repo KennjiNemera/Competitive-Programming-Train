@@ -5,10 +5,25 @@ public class D {
   public static void main(String[] args) throws IOException{
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-    // im pretty close to cracking this one, just trying to think of the psuedo
-    // ah yes..a classic choke -> I will try it later. Just not working for me right now oof.
+    int t = fr.nextInt();
 
-    // I mean, i'm on the right track with how I am inverting the bits but not clicking at some relationship. :(
+    while (t-- > 0) {
+        int n = fr.nextInt();
+        long prevx = fr.nextLong();
+        long prevy = 0;
+        StringBuilder out = new StringBuilder("0 ");
+
+        for (int i = 1; i < n; i++) {
+            long curx = fr.nextInt();
+            long cury = ((prevx ^ prevy) | curx) ^ curx;
+            out.append(cury + " ");
+            prevx=curx;prevy=cury;
+        }
+
+        pr.println(out.toString().trim());
+    }
+
+    pr.close();
   }
 
   static class Pair {
