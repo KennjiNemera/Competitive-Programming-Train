@@ -5,38 +5,33 @@ public class FixingTypos {
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-    String in = fr.nextLine();
     StringBuilder str = new StringBuilder("");
+    String in = fr.nextLine();
 
-    int i = 0;
-    while (i < in.length()) {
-      int last = getend(in, i);
-      if (last - i + 1 > 2 || last == in.length()) {
-        str.append(in.substring(i, i + 2));
-      } else str.append(in.substring(i, last + 1));
-      i=last + 1;
-    }
-
-    // pr.println(str.toString());
-    String ans = "";
+    char prev = in.charAt(0);
+    int count = 1;
+    str.append(prev);
+    boolean following = false;
     
-    for (int j = 0; j < str.length(); j++) {
-      char c = str.charAt(j);
-      if (ans.length() > 1) {
-        if (ans.length() == 2) {
-          if (ans.charAt(ans.length()-1) == c && ans.charAt(ans.length()-2) == c) {
-            continue;
-          } else ans += c;
-        } else if (ans.charAt(ans.length()-2) == ans.charAt(ans.length()-3) &&
-                   c == ans.charAt(ans.length()-1)) {
-          continue;
-        } else ans += c;
-      } else ans += c;
+    for (int i = 1; i < in.length(); i++) {
+      char cur = in.charAt(i);
+      if (cur == prev) {
+        if (count < 2 && !following) {
+          count++;
+          str.append(cur);
+        }
+      } else {
+        if (count == 2) {
+          following = true;
+        } else following = false;
+        count = 1;
+        prev = cur;
+        str.append(cur);
+      } 
     }
 
-    pr.println(ans);
+    pr.println(str.toString());
     pr.close();
-
   }
 
   static int getend(String sb, int i) {
