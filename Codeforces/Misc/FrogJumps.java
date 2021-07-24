@@ -1,11 +1,32 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class FrogJumps {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+          String s = fr.nextLine();
+
+          int maxLen = 0;
+          int curSeq = 0;
+          for (int i = 0; i < s.length(); i++) {
+              if (s.charAt(i) == 'L') {
+                curSeq++;
+              } else {
+                maxLen = Math.max(maxLen, curSeq);
+                curSeq = 0;
+              }
+          }
+
+          maxLen = Math.max(maxLen, curSeq);
+
+          pr.println(maxLen + 1);
+        }
+
+        pr.close();
     }
 
     static class Pair {

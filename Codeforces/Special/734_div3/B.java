@@ -1,11 +1,30 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class B {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+            String s = fr.nextLine();
+
+            int[] arr = new int[26];
+
+            int count = 0;
+
+            for (int i = 0; i < s.length(); i++) {
+                if (arr[s.charAt(i) - 'a'] < 2) {
+                    count++;
+                    arr[s.charAt(i) - 'a']++;
+                }
+            }
+
+            pr.println(count / 2);
+        }
+
+        pr.close();
     }
 
     static class Pair {

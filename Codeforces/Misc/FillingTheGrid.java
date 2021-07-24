@@ -1,40 +1,35 @@
 import java.io.*;
 import java.util.*;
 
-public class FairNumbers {
-
+public class FillingTheGrid {
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-    int t = fr.nextInt();
+    int n = fr.nextInt(), m = fr.nextInt();
 
-    while (t-- > 0) {
-      long n = fr.nextLong();
-      boolean flag = false;
+    long mod = 1000000007;
 
-      while (!flag) {
+    String[] row = fr.nextLine().split(" ");
+    String[] col = fr.nextLine().split(" ");
+    long ans= 1;
 
-        // base params for each attempt -> this might actually be optimal. STAY AWAY-> FROM STRING CONVERSIONS EVEN IF YOUR LIFE DEPENDS ON IT
-        long temp = n;
-        flag = true;
-
-        while (temp > 0) {
-          long a = temp % 10;
-          if (a != 0 && n % a != 0) {
-            flag = false;
-            break;
-          }
-          temp /= 10;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < m; j++) {
+        if (toInt(row[i]) == j && toInt(col[j]) > i || toInt(col[j]) == i && toInt(row[i]) > j) {
+          pr.println(0);
+          pr.close();
+          return;
+        } else if (toInt(col[j]) < i && toInt(row[i]) < j) {
+          ans *= 2;
+          ans = ans % mod;
         }
-
-        if (!flag)
-          n++;
       }
-      pr.println(n);
     }
 
-    pr.close();
+    // pr.println(count)
 
+    pr.println(ans);
+    pr.close();
   }
 
   static class Pair {

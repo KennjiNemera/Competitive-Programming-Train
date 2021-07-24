@@ -1,11 +1,23 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class A {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+          double n = fr.nextInt();
+
+          int two = (int) Math.round(n/3.0);
+
+          n -= two * 2;
+
+          pr.println((int) n + " " + two);
+        }
+
+        pr.close();
     }
 
     static class Pair {

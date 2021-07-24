@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class C {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));

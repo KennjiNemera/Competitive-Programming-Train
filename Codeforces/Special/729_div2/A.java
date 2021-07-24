@@ -1,11 +1,29 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class A {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+          int n = fr.nextInt();
+
+          int a = 0;
+          int b = 0;
+
+          for (int i = 0; i < 2 * n; i++) {
+            if (fr.nextInt() % 2 == 0) a++;
+            else b++;
+          }
+
+          if (a == b) {
+            pr.println("Yes");
+          } else pr.println("No");
+        }
+        
+        pr.close();
     }
 
     static class Pair {

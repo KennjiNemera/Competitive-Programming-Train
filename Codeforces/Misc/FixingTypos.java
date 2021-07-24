@@ -1,40 +1,48 @@
 import java.io.*;
 import java.util.*;
 
-public class FairNumbers {
-
+public class FixingTypos {
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-    int t = fr.nextInt();
+    StringBuilder str = new StringBuilder("");
+    String in = fr.nextLine();
 
-    while (t-- > 0) {
-      long n = fr.nextLong();
-      boolean flag = false;
-
-      while (!flag) {
-
-        // base params for each attempt -> this might actually be optimal. STAY AWAY-> FROM STRING CONVERSIONS EVEN IF YOUR LIFE DEPENDS ON IT
-        long temp = n;
-        flag = true;
-
-        while (temp > 0) {
-          long a = temp % 10;
-          if (a != 0 && n % a != 0) {
-            flag = false;
-            break;
-          }
-          temp /= 10;
+    char prev = in.charAt(0);
+    int count = 1;
+    str.append(prev);
+    boolean following = false;
+    
+    for (int i = 1; i < in.length(); i++) {
+      char cur = in.charAt(i);
+      if (cur == prev) {
+        if (count < 2 && !following) {
+          count++;
+          str.append(cur);
         }
-
-        if (!flag)
-          n++;
-      }
-      pr.println(n);
+      } else {
+        if (count == 2) {
+          following = true;
+        } else following = false;
+        count = 1;
+        prev = cur;
+        str.append(cur);
+      } 
     }
 
+    pr.println(str.toString());
     pr.close();
+  }
 
+  static int getend(String sb, int i) {
+    if (i == sb.length()) return -1;
+    if (i == sb.length()-1) return sb.length()-1;
+    char target = sb.charAt(i);
+    for (int j = i + 1; j < sb.length(); j++) {
+      if (sb.charAt(j) != target)
+        return j-1;
+    }
+    return sb.length();
   }
 
   static class Pair {

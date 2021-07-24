@@ -1,11 +1,62 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class C {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+          int n = fr.nextInt();
+          int[] me = new int[n];
+          int[] friend = new int[n];
+
+          for (int i = 0; i < friend.length; i++) {
+            me[i] = fr.nextInt();
+          }
+
+          for (int i = 0; i < friend.length; i++) {
+            friend[i] = fr.nextInt();
+          }
+
+          Arrays.sort(me);
+          Arrays.sort(friend);
+
+          for (int i = 1; i < friend.length; i++) {
+            me[i] += me[i-1];
+            friend[i] += friend[i-1]; 
+          }
+
+          pr.println(binarySearch(me,friend));
+        }
+
+        pr.close();
+    }
+
+    static int binarySearch(int[] me, int[] friend) {
+      int lo = me.length;
+      int hi = 1000000;
+      int ans = 0;
+      int n = me.length;
+      while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        int req = mid - (int)Math.floor(mid/4);
+        int additional = mid - n;
+        int total = Math.max(0,req - additional);
+        int a = me[n-1] + 100 * additional;
+        if (n-total-1 >= 0) a -= me[n-total-1];
+        int b = friend[n-1];
+        if (req < n) b -= friend[n-req-1];
+        if (a >= b) {
+          ans = mid - n;
+          hi = mid - 1; 
+        } else {
+          lo = mid + 1;
+        }
+      }
+
+      return ans;
     }
 
     static class Pair {

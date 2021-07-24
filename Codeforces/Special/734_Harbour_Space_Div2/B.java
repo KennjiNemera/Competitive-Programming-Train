@@ -1,11 +1,51 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class B {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+            String s = fr.nextLine();
+            String search = fr.nextLine();
+            int n = s.length();
+            int m = search.length();
+            boolean found = false;
+
+            for (int i = 0; i < n && !found; i++) {
+                for (int j = 0; j < n - i && !found && j + 1 <= m; j++) {
+                    int k = m - 1 - j;
+
+                    if (i + j < k) continue;
+
+                    int l1 = i;
+                    int r = i + j;
+                    int l2 = r - k;
+
+                    String test = "";
+
+                    if (l1 <= r) test += s.substring(l1, r+1);
+                    if (l2 <= r-1) {
+                        StringBuilder sb = new StringBuilder(s.substring(l2,r));
+                        test += sb.reverse().toString();
+                    }
+
+                    if (test.equals(search)) {
+                        found = true;
+                    }
+                }
+            }
+
+            if (found) {
+                pr.println("Yes");
+            } else {
+                pr.println("No");
+            }
+        }
+
+        pr.close();
     }
 
     static class Pair {
@@ -52,7 +92,7 @@ public class templateReader {
         // fill in new array
         int i = 0, j = 0;
         int k = l;
-        while(i < len1 && j < len2) {
+        while (i < len1 && j < len2) {
             if (L[i] < R[i]) {
                 arr[k] = L[i];
                 i++;
@@ -66,12 +106,14 @@ public class templateReader {
         // add remaining elements
         while (i < len1) {
             arr[k] = L[i];
-            i++;k++;
+            i++;
+            k++;
         }
 
         while (j < len2) {
             arr[k] = R[j];
-            j++; k++;
+            j++;
+            k++;
         }
     }
 
