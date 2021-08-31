@@ -1,58 +1,48 @@
 import java.io.*;
 import java.util.*;
 
-public class B2 {
+public class BerlandRegional {
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
     int t = fr.nextInt();
 
     while (t-- > 0) {
-
-      int n = fr.nextInt(), k = fr.nextInt();
-      int[] arr = new int[n];
-
-      HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+      int n = fr.nextInt();
+      HashMap<Integer, ArrayList<Long>> map = new HashMap<>();
+      String[] team = fr.nextLine().split(" ");
 
       for (int i = 0; i < n; i++) {
-        int a = fr.nextInt();
+        long a = fr.nextLong();
 
-        map.putIfAbsent(a, new ArrayList<>());
+        map.putIfAbsent(toInt(team[i]), new ArrayList<>());
 
-        if (map.get(a).size() < k) {
-          map.get(a).add(i);
+        map.get(toInt(team[i])).add(a);
+      }
+
+      // generate prefix for each university
+      long[] arr = new long[n];
+      for (Map.Entry<Integer, ArrayList<Long>> ent : map.entrySet()) { 
+        ArrayList<Long> temp = ent.getValue();
+        Collections.sort(temp);
+        for (int i = 1; i < temp.size(); i++) {
+          temp.set(i, temp.get(i - 1) + temp.get(i));
         }
-      }
-
-      int teamsize = 0;
-
-      // count the number of valid values there are
-      for (Map.Entry<Integer, ArrayList<Integer>> e : map.entrySet()) {
-        teamsize += e.getValue().size();
-      }
-
-      teamsize -= teamsize % k; // make teamsize divisible to ensure equal team sizes
-
-      int color = 0;
-      boolean green = false;
-
-      for (Map.Entry<Integer, ArrayList<Integer>> e : map.entrySet()) {
-        for (Integer a : e.getValue()) {
-          arr[a] = color + 1;
-          color++;
-          color %= k;
-          teamsize--;
-          if (teamsize == 0) {
-            green = true;
-            break;
+        int size = temp.size();
+        for (int k = 1; k <= n && k <= temp.size(); k++) {
+          int mod = temp.size() % k;
+          if (mod > 0) {
+            mod--;
+            arr[k-1] -= temp.get(mod);
           }
+          arr[k-1] += temp.get(size-1);
         }
-        if (green) break;
       }
 
       StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < arr.length; i++) {
-        sb.append(arr[i] + " ");
+
+      for (long i : arr) {
+        sb.append(i + " ");
       }
 
       pr.println(sb.toString().trim());
@@ -62,11 +52,12 @@ public class B2 {
   }
 
   static class Pair {
-    int x, y;
+    int x;
+    ArrayList<Integer> y;
 
-    public Pair(int x, int y) {
+    public Pair(int x) {
       this.x = x;
-      this.y = y;
+      this.y = new ArrayList<>();
     }
   }
 

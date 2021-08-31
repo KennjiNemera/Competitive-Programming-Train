@@ -1,51 +1,103 @@
 import java.io.*;
 import java.util.*;
 
-public class PlusFromPicture {
+public class RoundTrip2 {
 
-  static PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+  static int n, m, sv, ev;
+  static ArrayList<ArrayList<Integer>> adj;
+  static ArrayList<Integer> par;
+  static ArrayList<Boolean> vis;
 
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-    int h = fr.nextInt();
-    int w = fr.nextInt();
 
-    String[] arr = new String[h];
+    adj = new ArrayList<>();
+    par = new ArrayList<>();
+    vis = new ArrayList<>();
 
-    boolean foundRow = false, foundCol = false;
+    n = fr.nextInt();
+    m = fr.nextInt();
 
-    // row search
-    for (int i = 0; i < h; i++) {
-        String in = fr.nextLine();
-        int s = in.indexOf('*');
-        int l = in.lastIndexOf('*');
-        for (int j = s; j < l; j++) {
-          if (in.charAt(j) == '.') {
-            end();
-            return;
-          }
-        }
-        if (s-l+1 > 1 && foundRow) {
-          end();
-          return;
-        } else if (s-l+1 > 2) {
-          foundRow = true;
-        } 
-        arr[i] = in;
-    }
-    if (!foundRow) {
-      end();
+    for (int i = 0; i < n; i++) {
+      adj.add(new ArrayList<>());
+      vis.add(false);
+      par.add(-1);
     }
 
-    for (int i = 0; i < ; i++) {
-      
+    for (int i = 0; i < m; i++) {
+      int a = fr.nextInt();
+      int b = fr.nextInt();
+
+      adj.get(a-1).add(b);
+      adj.get(b-1).add(a);
     }
+    
+    boolean cancycle = visitAll();
+
+    if (!cancycle) {
+      pr.println("IMPOSSIBLE");
+      pr.close();
+      return;
+    } 
+
+    int cv = ev;
+    ArrayList<Integer> route = new ArrayList<>();
+    route.add(ev);
+
+    while (cv != sv) {
+      route.add(par.get(cv-1));
+      cv = par.get(cv-1);
+    }
+
+    route.add(ev);
+
+    StringBuilder sb = new StringBuilder();
+
+    for (Integer integer : route) {
+      sb.append(integer + " ");
+    }
+
+    pr.println(route.size());
+    pr.print(sb.toString().trim());
+    pr.close();
   }
 
-  static void end() {
-    pr.println("NO");
-    pr.close();
+  static boolean visitAll() {
+    for (int i = 1; i <= n; i++) {
+      if (!vis.get(i-1)) {
+        if (dfs(i, -1)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  static boolean dfs(int n, int p) {
+    // set traits
+    vis.set(n-1, true);
+    par.set(n-1, p);
+
+    // for each child
+    for (Integer child : adj.get(n-1)) {
+      // check for parent
+      if (child == p) continue;
+
+      // check for cycle
+      if (vis.get(child-1)) {
+        // return sequence
+        sv = child;
+        ev = n;
+        return true;
+      }
+
+      // recursive
+      if (dfs(child, n)) return true;      
+    }
+
+    return false;
   }
 
   static class Pair {

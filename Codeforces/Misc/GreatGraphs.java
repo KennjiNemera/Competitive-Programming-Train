@@ -1,61 +1,42 @@
 import java.io.*;
 import java.util.*;
 
-public class B2 {
+public class GreatGraphs {
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
     int t = fr.nextInt();
 
     while (t-- > 0) {
+      int n = fr.nextInt();
 
-      int n = fr.nextInt(), k = fr.nextInt();
       int[] arr = new int[n];
 
-      HashMap<Integer, ArrayList<Integer>> map = new HashMap<>();
+      int zeroes = 0;
 
       for (int i = 0; i < n; i++) {
         int a = fr.nextInt();
-
-        map.putIfAbsent(a, new ArrayList<>());
-
-        if (map.get(a).size() < k) {
-          map.get(a).add(i);
-        }
+        arr[i] = a;
+        if (a == 0) zeroes++;
       }
 
-      int teamsize = 0;
+      Arrays.sort(arr);
 
-      // count the number of valid values there are
-      for (Map.Entry<Integer, ArrayList<Integer>> e : map.entrySet()) {
-        teamsize += e.getValue().size();
+      long ans = 0;
+      long prevDif = 0;
+
+      for (int i = 1; i < n; i++) {
+        // forward addition
+        ans += arr[i] - arr[i-1];   
+        // backward addition
+        long sum = arr[i] - arr[i-1];
+        long dif = (sum * i + prevDif);
+        prevDif = dif;
+        
+        ans -= dif;        
       }
 
-      teamsize -= teamsize % k; // make teamsize divisible to ensure equal team sizes
-
-      int color = 0;
-      boolean green = false;
-
-      for (Map.Entry<Integer, ArrayList<Integer>> e : map.entrySet()) {
-        for (Integer a : e.getValue()) {
-          arr[a] = color + 1;
-          color++;
-          color %= k;
-          teamsize--;
-          if (teamsize == 0) {
-            green = true;
-            break;
-          }
-        }
-        if (green) break;
-      }
-
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < arr.length; i++) {
-        sb.append(arr[i] + " ");
-      }
-
-      pr.println(sb.toString().trim());
+      pr.println(ans);
     }
 
     pr.close();
