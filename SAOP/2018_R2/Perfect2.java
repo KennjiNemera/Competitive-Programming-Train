@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Perfect2 {
+public class perfect2 {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
@@ -25,7 +25,13 @@ public class Perfect2 {
           } else ans[2]++;
         }
 
-        pr.println(Arrays.toString(ans));
+        StringBuilder sb = new StringBuilder();
+
+        for (Integer val : ans) {
+            sb.append(val + " ");
+        }
+
+        pr.println(sb.toString().trim());
         pr.close();
     }
 

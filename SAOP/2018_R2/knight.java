@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class KnightMoves {
+public class knight {
 
   static int n, m;
   static int[][] moves = {{-2,1}, {-2,-1}, {-1,-2},{-1,2},{1,2},{1,-2},{2,1},{2,-1}};

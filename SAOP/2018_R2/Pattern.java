@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Pattern {
+public class pattern {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
@@ -13,18 +13,30 @@ public class Pattern {
         a = b;
 
         int cur = 0;
+        int prev = 0;
 
         for (int i = 2; i < n; i++) {
           b = fr.nextInt();
-          if (a + dif.get(cur) == b) cur = cur == dif.size()-1 ? 0 : cur + 1;
-          else {
+          if (a + dif.get(cur) == b) {
+              cur = cur == dif.size()-1 ? 0 : cur + 1;
+          } else {
             cur = 0;
             dif.add(b-a);
+            for (int j = 0; j < (i-prev) - 2; j++) {
+                dif.add(prev + 1, dif.get(prev));
+            }
+            prev = i;
           }
           a = b;
         }
 
-        pr.println(dif.toString());
+        StringBuilder sb = new StringBuilder();
+
+        for (Integer integer : dif) {
+            sb.append(integer + " ");
+        }
+
+        pr.println(sb.toString().trim());
         pr.close();
 
     }

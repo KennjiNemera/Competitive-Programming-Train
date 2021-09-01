@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class GameConsole {
+public class console {
     public static void main(String[] args) throws IOException {
         FastReader fr = new FastReader();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
@@ -15,27 +15,29 @@ public class GameConsole {
 
           switch (c) {
             case ' ':
-              c = 'A' + 27;
+              c = 'A' + 26;
               break;
             case '-':
-              c = 'A' + 28;
+              c = 'A' + 27;
               break;
             case '.':
-              c = 'A' + 29;
+              c = 'A' + 28;
               break;
             default:
               break;
           }
 
-          int ydif = Math.abs(c - prev) / 6;
+          int ydif = Math.abs((c - 'A') / 6 - (prev-'A') / 6);
           int xdif = Math.abs((c - 'A') % 6 - (prev - 'A') % 6);
           
           count += xdif + ydif + 1; 
           prev = c;
         }
 
-        int ydif = Math.abs(30 - (prev - 'A')) / 6;
-        int xdif = 6 - ((prev-'A') % 6);
+        char c = 'A' + 29; 
+
+        int ydif = Math.abs((c - 'A') / 6 - (prev-'A') / 6);
+        int xdif = Math.abs((c - 'A') % 6 - (prev - 'A') % 6);
         
         count += xdif + ydif + 1;        
 
