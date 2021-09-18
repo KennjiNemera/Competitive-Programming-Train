@@ -1,125 +1,226 @@
+import java.io.*;
+import java.text.BreakIterator;
 import java.util.*;
-
-class Pair {
-   public int first;
-   public int second; 
-
-   public Pair (int first, int second) {
-      this.first = first;
-      this.second = second;
-   }
-
-}
 
 public class Labrinth {
 
-   static char[][] grid;
-   static boolean[][] vis;
-   static Pair[][] path;
-   static int[][] moves = {{-1,0}, {1,0}, {0,-1}, {0,1}};
-   static int n,m;
-   static int sx,sy,ex,ey;
+    static char[][] c;
+    static char[][] par;
+    static boolean[][] vis;
+    static int[][] moves = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+    static int sx, sy, ex, ey;
+    static int n, m;
 
+    public static void main(String[] args) throws IOException {
+        FastReader fr = new FastReader();
+        PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        n = fr.nextInt();
+        m = fr.nextInt();
 
-   // perform a breadth first search over the grid
-   public static void bfs() {
-      Queue<Pair> q = new LinkedList<Pair>();
-      Pair root = new Pair(sx,sy);
-      q.offer(root);
-      while(!q.isEmpty()) {
-         int cx = q.peek().first;
-         int cy = q.peek().second;
-         q.poll();
-         for (int[] pair : moves) {
-            int mvx = pair[0];
-            int mvy = pair[1];
+        c = new char[n][m];
+        par = new char[n][m];
+        vis = new boolean[n][m];
 
-            if (isValid(cx + mvx, cy + mvy)) {
-               q.offer(new Pair(cx + mvx,cy + mvy));
-               vis[cx + mvx][cy + mvy] = true;
-               path[cx + mvx][cy + mvy] = new Pair(mvx, mvy);
+        for (int i = 0; i < n; i++) {
+            String s = fr.nextLine();
+            for (int j = 0; j < s.length(); j++) {
+                char temp = s.charAt(j);
+                if (temp == 'A') {
+                    sx = i;
+                    sy = j;
+                } else if (temp == 'B') {
+                    ex = i;
+                    ey = j;
+                }
+                c[i][j] = temp;
             }
-         }
-      }
+        }
 
-   }
+        if (search()) {
+            pr.println("YES");
 
-   // checks if move is valid
-   public static boolean isValid(int x, int y) {
-      if (x < 0 || x >= n || y < 0 || y >= m) return false; // checks if in range
-      if (vis[x][y]) return false; // checks if we have visited
-      return true;
-   }
-   
-   public static void main(String[] args) {
-      Scanner scan = new Scanner(System.in);   
-      n = scan.nextInt();
-      m = scan.nextInt();
-      scan.nextLine();
+            // PATH RETRIEVAL
+            StringBuilder sb = new StringBuilder();
 
-      // sizing our structures
-      grid = new char[n][m];
-      vis = new boolean[n][m];
-      path = new Pair[n][m];
-
-      // populate the grid
-      for (int i = 0; i < n; i++) {
-         grid[i] = scan.nextLine().toCharArray();
-      }
-
-      // populate the structures
-      for (int i = 0; i < n; i++) {
-         for (int j = 0; j < m; j++) {
-
-            path[i][j] = new Pair(-1,-1); // the path with null values
-
-            char c = grid[i][j];
-            
-            // populate the visited co-ords
-            switch (c) {
-               case '#' : vis[i][j] = true;
-                          break;
-               case 'A' : sx = i;
-                          sy = j;
-                          break;
-               case 'B' : ex = i;
-                          ey = j;
-                          break;     
+            while (true) {
+                if (par[ex][ey] == 'O') break;
+                sb.append(par[ex][ey]);
+                switch (par[ex][ey]) {
+                    case 'D': ex--; break;
+                    case 'U': ex++; break;
+                    case 'R': ey--; break;
+                    case 'L': ey++; break;
+                } 
             }
-         }
-      }
 
-      bfs();
+            pr.println(sb.length());
+            pr.println(sb.reverse().toString());
+        } else {
+            pr.println("NO");
+        }
 
-      if (!vis[ex][ey]) {
-         System.out.println("NO");
-         return;
-      } else {
-         System.out.println("YES");
-      }
+        pr.close();
 
-      // The actual path retrieval algorithm
-         ArrayList<Pair> ans = new ArrayList();
-         Pair end = new Pair(ex,ey);
-         // StringBuffer sb = new StringBuffer();
+    }
 
-         while (end.first != sx || end.second != sy) {
-            ans.add(path[end.first][end.second]);
-            // System.out.println(ans.get(ans.size()-1).first + "," + ans.get(ans.size()-1).second);
-            end.first -= ans.get(ans.size()-1).first;
-            end.second -= ans.get(ans.size()-1).second;
-         }
+    static boolean search() {
+        Queue<Pair> q = new LinkedList<>();
+        q.offer(new Pair(sx, sy, 'O'));
 
-         Collections.reverse(ans);
-         System.out.println(ans.size(  ));
+        while (!q.isEmpty()) {
+            Pair p = q.poll();
+            vis[p.x][p.y] = true;
+            par[p.x][p.y] = p.p;
 
-      for (Pair set : ans) {
-         if (set.first == 1 && set.second == 0) System.out.print("D");
-         else if (set.first == -1 && set.second == 0) System.out.print("U");
-         else if (set.first == 0 && set.second == 1) System.out.print("R");
-         else if (set.first == 0 && set.second == -1) System.out.print("L");
-      }
+            if (p.x == ex && p.y == ey)
+                return true;
 
-   }
+            for (int i = 0; i < 4; i++) {
+                int cx = p.x + moves[i][0];
+                int cy = p.y + moves[i][1];
 
+                if (isValid(cx, cy)) {
+                    if (!vis[cx][cy] && c[cx][cy] != '#') {
+                        char par = 'E';
+                        switch (i) {
+                            case 0:
+                                par = 'D';
+                                break;
+                            case 1:
+                                par = 'U';
+                                break;
+                            case 2:
+                                par = 'R';
+                                break;
+                            case 3:
+                                par = 'L';
+                                break;
+                        }
+                        q.offer(new Pair(cx, cy, par));
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static boolean isValid(int x, int y) {
+        if (x < 0 || y < 0 || x >= n || y >= m)
+            return false;
+        return true;
+    }
+
+    static class Pair {
+        int x, y;
+        char p;
+
+        public Pair(int x, int y, char p) {
+            this.x = x;
+            this.y = y;
+            this.p = p;
+        }
+    }
+
+    static int toInt(String s) {
+        return Integer.parseInt(s);
+    }
+
+    // MERGE SORT IMPLEMENTATION
+    void sort(int[] arr, int l, int r) {
+        if (l < r) {
+            int m = l + (r - l) / 2;
+
+            sort(arr, l, m);
+            sort(arr, m + 1, r);
+
+            // call merge
+            merge(arr, l, m, r);
+        }
+    }
+
+    void merge(int[] arr, int l, int m, int r) {
+        // find sizes
+        int len1 = m - l + 1;
+        int len2 = r - m;
+
+        int[] L = new int[len1];
+        int[] R = new int[len2];
+
+        // push to copies
+        for (int i = 0; i < L.length; i++)
+            L[i] = arr[l + i];
+        for (int i = 0; i < R.length; i++) {
+            R[i] = arr[m + 1 + i];
+        }
+
+        // fill in new array
+        int i = 0, j = 0;
+        int k = l;
+        while (i < len1 && j < len2) {
+            if (L[i] < R[i]) {
+                arr[k] = L[i];
+                i++;
+            } else {
+                arr[k] = R[i];
+                j++;
+            }
+            k++;
+        }
+
+        // add remaining elements
+        while (i < len1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < len2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+
+    static class FastReader {
+        BufferedReader br;
+        StringTokenizer st;
+
+        public FastReader() throws FileNotFoundException {
+            br = new BufferedReader(new InputStreamReader(System.in));
+        }
+
+        String next() {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
+
+        long nextLong() {
+            return Long.parseLong(next());
+        }
+
+        double nextDouble() {
+            return Double.parseDouble(next());
+        }
+
+        String nextLine() {
+            String str = "";
+            try {
+                str = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return str;
+        }
+    }
 }
