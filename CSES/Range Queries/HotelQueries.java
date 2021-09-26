@@ -1,123 +1,81 @@
 import java.io.*;
 import java.util.*;
 
-public class stones {
+public class HotelQueries {
 
-  static long[][] tree;
-  static int n, m;
-
-  static void update(int x, int y, int val) {
-    for (int i = x; i <= n; i += (i & -i)) {
-      for (int j = y; j <= m; j += (j & -j)) {
-        tree[i][j] += val;
-      }
-    }
-  }
-
-  static long sum(int x, int y) {
-    long ans = 0;
-    for (int i = x; i > 0; i -= (i & -i)) {
-      for (int j = y; j > 0; j -= (j & -j)) {
-        ans += tree[i][j];
-      }
-    }
-    return ans;
-  }
+  static int n;
+  static int[] tree;
 
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-
     n = fr.nextInt();
-    m = fr.nextInt();
     int q = fr.nextInt();
 
-    tree = new long[n + 1][m + 1];
+    n = (int) Math.pow(2, Math.ceil(Math.log10(n * 1.0) / Math.log10(2.0)));
 
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= m; j++) {
-        update(i, j, fr.nextInt());
-      }
+    tree = new int[2 * n];
+    String[] adj = fr.nextLine().split(" ");
+
+    for (int i = 0; i < adj.length; i++) {
+      int a = toInt(adj[i]);
+      update(a, i);
     }
 
-    while (q-- > 0) {
-      int t = fr.nextInt();
+    StringBuilder sb = new StringBuilder();
+    String[] arr = fr.nextLine().split(" ");
 
-      if (t == 0) {
-        // build tower
-        int a = fr.nextInt()+1, b = fr.nextInt()+1;
-        long stones = fr.nextLong();
+    for (int i = 0; i < q ; i++) {
+      int a = toInt(arr[i]);
+      int ans = roomsearch(a);
 
-        long ans = 0;
-        long prev = 0;
-
-        for (int i = 0; (a + i <= n) || (a - i > 0) || (b + i <= m) || (b - i > 0); i++) {
-
-          if (stones == 0) break;
-
-          long curStones = sum(min(n, a+i), min(m, b+i))
-                           - sum(a-i-1,min(b+i, m))
-                           - sum(min(n, a+i), b-i-1)
-                           + sum(a-i-1, b-i-1)
-                           - prev;
-
-          prev += curStones;
-
-          curStones = Math.min(curStones, stones);
-
-          stones -= curStones;
-
-          ans += 2 * i * curStones;
-        }
-
-        if (stones == 0) {
-          pr.println(ans);
-        } else {
-          pr.println(-1);
-        }
+      if (ans != 0) {
+        update((int)tree[ans] - a, ans-n);
+        sb.append((ans - n + 1) + " ");
       } else {
-        // update cell
-        int a = fr.nextInt() + 1, b = fr.nextInt() + 1;
-        int c = fr.nextInt();
-
-        int curval = (int) (sum(a, b) + sum(a - 1, b - 1) - sum(a - 1, b) - sum(a, b - 1));
-
-        update(a, b, c - curval);
+        sb.append("0 ");
       }
     }
 
-    pr.close();
-
+    pr.println(sb.toString().trim());
+    pr.close();    
   }
 
-  static class Comp implements Comparator<Pair> {
-    public int compare(Pair a, Pair b) {
-      return Integer.compare(a.c, b.c);
+  static int roomsearch(int req) {
+    int i = 1;
+    boolean found = false;
+
+    while (i < n) {
+      if (tree[i] < req)
+        return 0;
+
+      found = true;
+      if (tree[2 * i] >= req) {
+        i *= 2;
+      } else {
+        i *= 2;
+        i++;
+      }
     }
+
+    return found ? i : 0;
   }
 
-  static int min(int x, int y) {
-    return Math.min(x, y);
-  }
-
-  static int max(int x, int y) {
-    return Math.max(x, y);
+  static void update(int a, int pos) {
+    pos += n;
+    tree[pos] = a;
+    for (int i = pos / 2; i > 0; i /= 2) {
+      tree[i] = Math.max(tree[2 * i], tree[2 * i + 1]);
+    }
   }
 
   static class Pair {
-    int x, y, c;
+    int x, y;
 
-    public Pair(int x, int y, int c) {
+    public Pair(int x, int y) {
       this.x = x;
       this.y = y;
-      this.c = c;
     }
-  }
-
-  static int gcd(int a, int b) {
-    if (b == 0)
-      return a;
-    return gcd(b, a % b);
   }
 
   static int toInt(String s) {
@@ -135,6 +93,23 @@ public class stones {
       // call merge
       merge(arr, l, m, r);
     }
+  }
+
+  void minimumquery(long[][] arr, long[] vals, int n) {
+
+    for (int i = 0; i < arr.length; i++) {
+      arr[i][0] = vals[i];
+    }
+
+    for (int i = 1; (1 << i) <= n; i++) {
+      for (int j = 0; j + (1 << i) - 1 < n; j++) {
+        arr[j][i] = Math.min(arr[j][i - 1], arr[j + (1 << (i - 1))][i - 1]);
+      }
+    }
+  }
+
+  int solveExp2(int n) {
+    return (int) Math.ceil(Math.log10(n * 1.0) / Math.log10(2 * 1.0));
   }
 
   void merge(int[] arr, int l, int m, int r) {

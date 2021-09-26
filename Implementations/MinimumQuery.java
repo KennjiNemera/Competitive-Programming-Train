@@ -9,6 +9,7 @@ public class MinimumQuery {
     Scanner scan = new Scanner(System.in);
 
     int n = scan.nextInt();
+    int t = scan.nextInt();
 
     arr = new int[n];
     int j = getfloor(n);
@@ -19,8 +20,6 @@ public class MinimumQuery {
     }
 
     mini(n);
-
-    int t = scan.nextInt();
 
     while (t-- > 0) {
       int a = scan.nextInt();
@@ -48,6 +47,7 @@ public class MinimumQuery {
     }   
   }
 
+  // use logs to get the value in O(1)
   static int getfloor(int n) {
     int i = 0;
     if (n == 1) return 0;

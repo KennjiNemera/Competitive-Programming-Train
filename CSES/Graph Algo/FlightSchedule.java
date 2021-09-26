@@ -1,123 +1,91 @@
 import java.io.*;
 import java.util.*;
 
-public class stones {
+public class FlightSchedule {
 
-  static long[][] tree;
-  static int n, m;
-
-  static void update(int x, int y, int val) {
-    for (int i = x; i <= n; i += (i & -i)) {
-      for (int j = y; j <= m; j += (j & -j)) {
-        tree[i][j] += val;
-      }
-    }
-  }
-
-  static long sum(int x, int y) {
-    long ans = 0;
-    for (int i = x; i > 0; i -= (i & -i)) {
-      for (int j = y; j > 0; j -= (j & -j)) {
-        ans += tree[i][j];
-      }
-    }
-    return ans;
-  }
-
+  static ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
+  static boolean[] vis;
+  static long[] dist;
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
     PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+    int n = fr.nextInt(), m = fr.nextInt();
 
-    n = fr.nextInt();
-    m = fr.nextInt();
-    int q = fr.nextInt();
+    vis = new boolean[n];
+    dist = new long[n];
 
-    tree = new long[n + 1][m + 1];
-
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= m; j++) {
-        update(i, j, fr.nextInt());
-      }
+    for (int i = 0; i < n; i++) {
+      adj.add(new ArrayList<>());
+      dist[i] = (long)Math.pow(10, 15);
     }
 
-    while (q-- > 0) {
-      int t = fr.nextInt();
+    for (int i = 0; i < m; i++) {
+      int a = fr.nextInt(), b = fr.nextInt(), c = fr.nextInt();
 
-      if (t == 0) {
-        // build tower
-        int a = fr.nextInt()+1, b = fr.nextInt()+1;
-        long stones = fr.nextLong();
-
-        long ans = 0;
-        long prev = 0;
-
-        for (int i = 0; (a + i <= n) || (a - i > 0) || (b + i <= m) || (b - i > 0); i++) {
-
-          if (stones == 0) break;
-
-          long curStones = sum(min(n, a+i), min(m, b+i))
-                           - sum(a-i-1,min(b+i, m))
-                           - sum(min(n, a+i), b-i-1)
-                           + sum(a-i-1, b-i-1)
-                           - prev;
-
-          prev += curStones;
-
-          curStones = Math.min(curStones, stones);
-
-          stones -= curStones;
-
-          ans += 2 * i * curStones;
-        }
-
-        if (stones == 0) {
-          pr.println(ans);
-        } else {
-          pr.println(-1);
-        }
-      } else {
-        // update cell
-        int a = fr.nextInt() + 1, b = fr.nextInt() + 1;
-        int c = fr.nextInt();
-
-        int curval = (int) (sum(a, b) + sum(a - 1, b - 1) - sum(a - 1, b) - sum(a, b - 1));
-
-        update(a, b, c - curval);
-      }
+      adj.get(a-1).add(new Pair(b-1, c));
     }
 
+    dist[0] = 0;
+
+    PriorityQueue<Tuple> pq = new PriorityQueue<Tuple>(new Comp());
+
+    // tuple key
+      // 1) Distance to node
+      // 2) Current Index
+      // 3) Current max on route
+
+    pq.offer(new Tuple(0, 0, 0));
+
+    while (!pq.isEmpty()) {
+      Tuple tp = pq.poll();
+      if (vis[tp.y]) continue;
+      vis[tp.y] = true;
+
+      for (Pair p : adj.get(tp.y)) {
+        long temp;
+        long max = Math.max(tp.z, p.y); 
+        temp = dist[tp.y] + p.y;
+        if (p.x == n-1) {
+          temp -= max;
+          temp += (long)Math.floor(max/2);
+        }
+        if (temp < dist[p.x]) {
+          dist[p.x] = temp;
+          pq.offer(new Tuple(dist[p.x], p.x, max));
+        }
+      }
+
+    }
+
+    pr.println(dist[n-1]);
     pr.close();
-
-  }
-
-  static class Comp implements Comparator<Pair> {
-    public int compare(Pair a, Pair b) {
-      return Integer.compare(a.c, b.c);
-    }
-  }
-
-  static int min(int x, int y) {
-    return Math.min(x, y);
-  }
-
-  static int max(int x, int y) {
-    return Math.max(x, y);
+    
   }
 
   static class Pair {
-    int x, y, c;
+    int x, y;
 
-    public Pair(int x, int y, int c) {
+    public Pair(int x, int y) {
       this.x = x;
       this.y = y;
-      this.c = c;
     }
   }
 
-  static int gcd(int a, int b) {
-    if (b == 0)
-      return a;
-    return gcd(b, a % b);
+  static class Tuple {
+    long x, z;
+    int y;
+
+    public Tuple(long x, int y, long z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
+  }
+
+  static class Comp implements Comparator<Tuple> {
+    public int compare(Tuple a, Tuple b) {
+      return Long.compare(a.x, b.x);
+    }
   }
 
   static int toInt(String s) {

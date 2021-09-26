@@ -10,41 +10,19 @@ public class buttons {
 
     int ans = 0;
     
-    if (n > m) {
-      ans += (n - m);
-      n = m;
-    } 
-
-    long x = getVal(m, n, a);
-    long y = getVal(m, n-1,a);
-
-    while (n != m) {
-      // ask for a mathematical approach to solving for the exponent
-      if (Math.abs(x - m) <= Math.abs(y - m)) {
-        n *= a;
-        x = getVal(m, n, a);
-        y = getVal(m, n-1,a);
-        ans++;
+    while (m > n) {
+      if (m % a == 0) {
+        m /= a;
       } else {
-        n--;
-        x = y;
-        y = getVal(m, n-1, a);
-        ans++;
+        m++;
       }
+      ans++;
     }
 
-    pr.println(ans);
+    pr.println(ans + (n - m));
     pr.close();
   }
 
-  static long getVal(long m, long n, double a) {
-    long b = n - 1;
-    double n1 = Math.ceil(Math.log10((double)m/(double)n) / (double)Math.log10(a));
-
-    n *= Math.pow(a, n1);
-
-    return n;
-  }
 
   static class Pair {
     int x, y;

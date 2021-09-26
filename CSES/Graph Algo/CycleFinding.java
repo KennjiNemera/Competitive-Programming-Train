@@ -1,28 +1,14 @@
 import java.io.*;
 import java.util.*;
 
-public class stones {
+public class CycleFinding {
 
-  static long[][] tree;
+  static int[] par;
+  static boolean[] vis;
+  static ArrayList<Tuple> adj = new ArrayList<>();
+  static ArrayList<Integer> log = new ArrayList<>();
   static int n, m;
-
-  static void update(int x, int y, int val) {
-    for (int i = x; i <= n; i += (i & -i)) {
-      for (int j = y; j <= m; j += (j & -j)) {
-        tree[i][j] += val;
-      }
-    }
-  }
-
-  static long sum(int x, int y) {
-    long ans = 0;
-    for (int i = x; i > 0; i -= (i & -i)) {
-      for (int j = y; j > 0; j -= (j & -j)) {
-        ans += tree[i][j];
-      }
-    }
-    return ans;
-  }
+  static long[] dist;
 
   public static void main(String[] args) throws IOException {
     FastReader fr = new FastReader();
@@ -30,94 +16,101 @@ public class stones {
 
     n = fr.nextInt();
     m = fr.nextInt();
-    int q = fr.nextInt();
 
-    tree = new long[n + 1][m + 1];
+    dist = new long[n];
+    vis = new boolean[n];
+    par = new int[n];
 
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= m; j++) {
-        update(i, j, fr.nextInt());
+    long inf = (long) Math.pow(10, 15);
+
+    for (int i = 0; i < n; i++) {
+      dist[i] = inf;
+      par[i] = -1;
+    }
+
+    for (int i = 0; i < m; i++) {
+      int a = fr.nextInt() - 1, b = fr.nextInt() - 1, c = fr.nextInt();
+
+      adj.add(new Tuple(a, b, c));
+    }
+
+    dist[0] = 0;
+
+    int x = -1;
+
+    for (int i = 0; i < n; i++) {
+      x = -1;
+      for (Tuple edge : adj) {
+        int source = edge.x, target = edge.y, weight = edge.z;
+
+        if (weight > inf)
+          continue;
+
+        long temp = dist[source] + weight;
+
+        if (temp < dist[target]) {
+          dist[target] = temp;
+          // keep track of parents
+          par[target] = source;
+
+          x = target;
+        }
       }
     }
 
-    while (q-- > 0) {
-      int t = fr.nextInt();
+    if (x == -1) {
+      pr.println("NO");
+    } else {
+      pr.println("YES");
 
-      if (t == 0) {
-        // build tower
-        int a = fr.nextInt()+1, b = fr.nextInt()+1;
-        long stones = fr.nextLong();
+      int y = x;
 
-        long ans = 0;
-        long prev = 0;
-
-        for (int i = 0; (a + i <= n) || (a - i > 0) || (b + i <= m) || (b - i > 0); i++) {
-
-          if (stones == 0) break;
-
-          long curStones = sum(min(n, a+i), min(m, b+i))
-                           - sum(a-i-1,min(b+i, m))
-                           - sum(min(n, a+i), b-i-1)
-                           + sum(a-i-1, b-i-1)
-                           - prev;
-
-          prev += curStones;
-
-          curStones = Math.min(curStones, stones);
-
-          stones -= curStones;
-
-          ans += 2 * i * curStones;
-        }
-
-        if (stones == 0) {
-          pr.println(ans);
-        } else {
-          pr.println(-1);
-        }
-      } else {
-        // update cell
-        int a = fr.nextInt() + 1, b = fr.nextInt() + 1;
-        int c = fr.nextInt();
-
-        int curval = (int) (sum(a, b) + sum(a - 1, b - 1) - sum(a - 1, b) - sum(a, b - 1));
-
-        update(a, b, c - curval);
+      for (int i = 0; i < n; i++) {
+        y = par[y];
       }
+
+      for (int cur = y;; cur = par[cur]) {
+        log.add(cur+1);
+
+        // check that we have completed the cycle
+        if (cur == y && log.size() > 1) {
+          break;
+        }
+      }
+
+      Collections.reverse(log);
+
+      StringBuilder sb = new StringBuilder();
+
+      for (Integer a : log) {
+        sb.append(a + " ");
+      }
+
+      pr.println(sb.toString().trim());
     }
+
+
 
     pr.close();
-
   }
 
-  static class Comp implements Comparator<Pair> {
-    public int compare(Pair a, Pair b) {
-      return Integer.compare(a.c, b.c);
+  static class Tuple {
+    int x, y, z;
+
+    public Tuple(int x, int y, int z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
     }
-  }
-
-  static int min(int x, int y) {
-    return Math.min(x, y);
-  }
-
-  static int max(int x, int y) {
-    return Math.max(x, y);
   }
 
   static class Pair {
-    int x, y, c;
+    int x, y;
 
-    public Pair(int x, int y, int c) {
+    public Pair(int x, int y) {
       this.x = x;
       this.y = y;
-      this.c = c;
     }
-  }
-
-  static int gcd(int a, int b) {
-    if (b == 0)
-      return a;
-    return gcd(b, a % b);
   }
 
   static int toInt(String s) {

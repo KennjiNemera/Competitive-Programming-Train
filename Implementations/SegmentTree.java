@@ -7,7 +7,7 @@ public class SegmentTree {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         int n = scan.nextInt(); // length of the array
-        int len = (int) Math.pow(2, Math.ceil(Math.log(n)/Math.log(2))); // little math trick to get first power of 2 >= n
+        int len = (int) Math.pow(2, Math.ceil(Math.log(n)/Math.log(2))); // little log trick to get first power of 2 >= n
 
         arr = new int[2*len];
 
