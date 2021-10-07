@@ -1,0 +1,26 @@
+
+1. Dynamic Components
+2. Database to manage user info and stats to use for processing with queries
+3. Build your own query system
+
+<Dynamic Components>
+
+~	We could maybe a cipher unlock game where we create elements on a panel at random positions
+	the aim of it would be to have an average click time beneath the required threshold to pass a level.
+	We could dynamically create and destroy the game form and pass all required information.
+	
+~	When implementing a leaderboard system to display stats from users in the database. We can then
+	create some panel element for each record in the database.
+	
+~	We could also play around and remove instances of element.hide and replace it with some dynamic implementation.
+
+<Database>
+
+~ 	We can store user stats such as -> 
+		Number of decryptions. 
+		Fastest Run on a cipher unlock.
+		Most times logged on.
+		Longest encryption sent
+		
+~ 	This will be implemented in a Leaderboard where we implement a query builder based on certain
+	settings and toggles to query the db.
