@@ -17,6 +17,11 @@ public class templateReader {
         }
     }
 
+    static int gcd(int a, int b) {
+        if (b == 0) return a;
+        return gcd(b, a % b);
+    }
+
     static int toInt(String s) {
         return Integer.parseInt(s);
     }
@@ -52,7 +57,7 @@ public class templateReader {
         // fill in new array
         int i = 0, j = 0;
         int k = l;
-        while(i < len1 && j < len2) {
+        while (i < len1 && j < len2) {
             if (L[i] < R[i]) {
                 arr[k] = L[i];
                 i++;
@@ -66,12 +71,14 @@ public class templateReader {
         // add remaining elements
         while (i < len1) {
             arr[k] = L[i];
-            i++;k++;
+            i++;
+            k++;
         }
 
         while (j < len2) {
             arr[k] = R[j];
-            j++; k++;
+            j++;
+            k++;
         }
     }
 

@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class reunite {
+public class reuite {
 
   static ArrayList<ArrayList<Integer>> arr;
   static int n, a, b;

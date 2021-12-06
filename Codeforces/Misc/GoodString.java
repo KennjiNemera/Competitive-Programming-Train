@@ -13,7 +13,9 @@ public class GoodString {
       int l = s.indexOf(">");
       int r = s.lastIndexOf("<");
 
-      int min = Math.max(0,Math.min(Math.min(l, s.length() - l), Math.min(r, s.length() - r)));
+      int min;
+      if (l == -1 || r == -1) min = 0;
+      else min = Math.min(l, n - r - 1);
 
       pr.println(min);
     }

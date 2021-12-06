@@ -1,4 +1,5 @@
-Today just feels like the 
-wrong day for problems. Sleep
-is key. So il look into a 
-thought I had earlier today and wrap it up at that.
+What we need to do right now:
+
+(THEORY SESSION)
+1. Rerun greedy algo's!
+2. Rerun DP!
