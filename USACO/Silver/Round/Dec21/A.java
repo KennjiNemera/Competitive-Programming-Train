@@ -1,10 +1,19 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class A {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int k = fr.nextInt();
+        int m = fr.nextInt();
+        int n = fr.nextInt();
+
+        Pair[] arr = new Pair[k];
+
+        for (int i = 0; i < arr.length; i++) {
+          arr[i] = new Pair(fr.nextInt(), fr.nextInt());
+        }
 
     }
 
