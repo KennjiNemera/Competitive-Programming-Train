@@ -1,46 +1,18 @@
 import java.io.*;
 import java.util.*;
 
-public class A {
+public class B {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
-        int k, m, n;
+        int t = fr.nextInt();
 
-        k = fr.nextInt();
-        m = fr.nextInt();
-        n = fr.nextInt();
+        while (t-- > 0) {
+          int n = fr.nextInt();
+          int m = fr.nextInt();
 
-        Pair[] arr = new Pair[k];
-
-        for (int i = 0; i < k; i++) {
-          arr[i] = new Pair(fr.nextInt(), fr.nextInt());
+          
         }
-
-        TreeSet<Integer> cows = new TreeSet<>();
-
-        Arrays.sort(arr, (a, b) -> a.x - b.x);
-
-        for (int i = 0; i < m; i++) {
-          cows.add(fr.nextInt());
-        }
-
-        long points = 0;
-
-        for (int i = 0; i < k; i++) {
-          int cur = arr[i].x;
-
-          Integer lower = cows.lower(cur);
-          Integer higher = cows.higher(cur);
-
-          if (lower == null) {
-            
-          }
-
-        }
-
-
-
     }
 
     static class Pair {
