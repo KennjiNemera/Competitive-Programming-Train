@@ -1,11 +1,49 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class PolycarpRecoversPermutation {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+            int n = fr.nextInt();
+
+            int[] arr = new int[n];
+
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = fr.nextInt();
+            }
+
+            // check that if it is valid
+
+            if (!(arr[0] == n || arr[n-1] == n))
+            {
+                pr.println(-1);
+                continue;
+            }
+
+            String out = "";
+
+            StringBuilder front = new StringBuilder();
+            StringBuilder back = new StringBuilder();
+
+            for (int i = 0; i < n / 2; i++) {
+                front.append(arr[n / 2 - i - 1] + " ");
+                back.append(arr[n - i - 1] + " ");
+            }
+
+            if (n % 2 != 0) {
+                out = arr[n/2] + " " + front.toString() + back.toString();
+            } else {
+                out = front.toString() + back.toString();
+            }
+
+            pr.println(out);
+        }
+
+        pr.close();
     }
 
     static class Pair {

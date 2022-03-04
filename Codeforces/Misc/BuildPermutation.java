@@ -1,11 +1,97 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class BuildPermutation {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+            int n = fr.nextInt(), a = fr.nextInt(), b = fr.nextInt();
+
+            if (a + b > n - 2 ) {
+                pr.println(-1);
+                continue;
+            }
+
+            if (Math.abs(a - b) > 1)  {
+                pr.println(-1);
+                continue;
+            }
+
+            // casework for each kind of sequence
+            int[] out = new int[n];
+            int s, e;
+
+            if (a == b) {
+                s = 1;
+                e = n - 1;
+
+                out[0] = n;
+
+                int cur = 1;
+
+                for (int i = 0; i < a; i++) {
+                    out[cur] = s;
+                    out[cur + 1] = e;
+                    s++;
+                    e--;    
+                    cur += 2;
+                }
+
+                while (e >= s) {
+                    out[cur] = e;
+                    e--;
+                    cur++;
+                }
+                
+            } else if (a > b) {
+                s = 1;
+                e = n;
+
+                int cur = 0;
+
+                for (int i = 0; i < a; i++) {
+                    out[cur] = s;
+                    out[cur + 1] = e;
+                    s++;
+                    e--;   
+                    cur += 2; 
+                }
+
+                while (e >= s && cur < n) {
+                    out[cur] = e;
+                    e--;
+                    cur++;
+                }
+            } else {
+                s = 1;
+                e = n;
+
+                int cur = 0;
+
+                for (int i = 0; i < b; i++) {
+                    out[cur] = e;
+                    out[cur + 1] = s;
+                    s++;
+                    e--; 
+                    cur += 2;   
+                }
+
+                while (s <= e && cur < n) {
+                    out[cur] = s;
+                    s++;
+                    cur++;
+                }
+            }
+
+
+            String ans = Arrays.toString(out).replaceAll(",", "");
+            pr.println(ans.substring(1, ans.length()-1));
+        }
+
+        pr.close();
     }
 
     static class Pair {
@@ -134,27 +220,6 @@ public class templateReader {
 			} while (c > ' ');
 			return res.toString();
 		}
-
-		public long nextLong() { // nextLong() would be implemented similarly
-			long c;
-			do {
-				c = nextByte();
-			} while (c <= ' ');
-			int sgn = 1;
-			if (c == '-') {
-				sgn = -1;
-				c = nextByte();
-			}
-			long res = 0;
-			do {
-				if (c < '0' || c > '9')
-					throw new InputMismatchException();
-				res = 10 * res + c - '0';
-				c = nextByte();
-			} while (c > ' ');
-			return res * sgn;
-		}
-
 
 		public int nextInt() { // nextLong() would be implemented similarly
 			int c;
