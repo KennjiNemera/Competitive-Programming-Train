@@ -1,11 +1,39 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class UpdateFiles {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+        int t = fr.nextInt();
 
+        while (t-- > 0) {
+            long n = fr.nextLong();
+            long k = fr.nextLong();
+
+            if (n == 1) {
+                pr.println(0);
+                continue;
+            }
+
+            long x = (long)Math.ceil(Math.log(k) / Math.log(2));
+
+            pr.println((Math.log(k) * 1.0) / (1.0 * Math.log(2)));
+
+            long total = Math.max(1, (long) Math.pow(2, x));
+
+            pr.println(total);
+
+            x += Math.max(0,Math.ceil((double)((long)(n - total) / (long)(k * 1.0))));
+
+            pr.println(Math.ceil((double)((n - total) / (k * 1.0))));
+
+            pr.println(total + " : " + x);
+
+            pr.println();
+        }
+
+        pr.close();
     }
 
     static class Pair {
@@ -135,27 +163,6 @@ public class templateReader {
 			return res.toString();
 		}
 
-		public long nextLong() { // nextLong() would be implemented similarly
-			long c;
-			do {
-				c = nextByte();
-			} while (c <= ' ');
-			int sgn = 1;
-			if (c == '-') {
-				sgn = -1;
-				c = nextByte();
-			}
-			long res = 0;
-			do {
-				if (c < '0' || c > '9')
-					throw new InputMismatchException();
-				res = 10 * res + c - '0';
-				c = nextByte();
-			} while (c > ' ');
-			return res * sgn;
-		}
-
-
 		public int nextInt() { // nextLong() would be implemented similarly
 			int c;
 			do {
@@ -167,6 +174,26 @@ public class templateReader {
 				c = nextByte();
 			}
 			int res = 0;
+			do {
+				if (c < '0' || c > '9')
+					throw new InputMismatchException();
+				res = 10 * res + c - '0';
+				c = nextByte();
+			} while (c > ' ');
+			return res * sgn;
+		}
+
+        public long nextLong() { // nextLong() would be implemented similarly
+			long c;
+			do {
+				c = nextByte();
+			} while (c <= ' ');
+			int sgn = 1;
+			if (c == '-') {
+				sgn = -1;
+				c = nextByte();
+			}
+			long res = 0;
 			do {
 				if (c < '0' || c > '9')
 					throw new InputMismatchException();

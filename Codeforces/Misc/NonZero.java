@@ -1,11 +1,41 @@
 import java.io.*;
 import java.util.*;
 
-public class templateReader {
+public class NonZero {
     public static void main(String[] args) throws IOException {
         FastIO fr = new FastIO();
         PrintWriter pr = new PrintWriter(new OutputStreamWriter(System.out));
+		int t = fr.nextInt();
 
+		// precompute bits of numbers from 1 to 200000
+		int[][] dp = new int[18][200001];
+
+		for (int i = 0; i < 18; i++) {
+			int val = 1 << i; 
+			for (int j = 1; j <= 200000; j++) {
+				if ((j & val) != 0) dp[i][j] = 1;
+				dp[i][j] += dp[i][j - 1];
+			}
+		}
+
+		while (t-- > 0) {
+			int l = fr.nextInt();
+			int r = fr.nextInt();
+
+			int n = r - l + 1;
+
+			long ans = Integer.MAX_VALUE;
+
+			for (int i = 0; i < 18; i++) {
+				int count = dp[i][r] - dp[i][l-1];
+				
+				ans = Math.min(ans, n - count);
+			}
+
+			pr.println(ans);
+		}
+
+		pr.close();
     }
 
     static class Pair {
@@ -134,27 +164,6 @@ public class templateReader {
 			} while (c > ' ');
 			return res.toString();
 		}
-
-		public long nextLong() { // nextLong() would be implemented similarly
-			long c;
-			do {
-				c = nextByte();
-			} while (c <= ' ');
-			int sgn = 1;
-			if (c == '-') {
-				sgn = -1;
-				c = nextByte();
-			}
-			long res = 0;
-			do {
-				if (c < '0' || c > '9')
-					throw new InputMismatchException();
-				res = 10 * res + c - '0';
-				c = nextByte();
-			} while (c > ' ');
-			return res * sgn;
-		}
-
 
 		public int nextInt() { // nextLong() would be implemented similarly
 			int c;
