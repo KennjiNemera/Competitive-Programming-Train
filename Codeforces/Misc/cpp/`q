@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int a1, a2, b1, b2;
+
+int getBestF(int &a[], int cur)
+{
+
+}
+
+int getBestS(int &a[], int cur)
+{
+
+}
+
+int recur(bool &arr[], int total)
+{
+    bool valid = true;
+
+    int corner = 0;
+
+    // verify whether all the corners have been connected
+    for (int i = 0; i < 4; i++){
+        if (!arr[i])
+        {
+            corner = i + 1;
+        }
+    }
+
+    if (!corner) return total;
+
+    // find the minimum of all the possibilities
+    arr[corner-1] = 1;
+
+    for (int i = 0; i < n; i++)
+    {
+        
+    }
+
+
+}
+
+void solve()
+{
+    int n;
+
+    cin >> n;
+
+    int a[n-2], b[n-2];
+
+    cin >> a1;
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        cin >> a[i];
+    }
+
+    cin >> a2 >> b1;
+
+    for (int i = 0; i < n - 1; i++)
+    {
+        cin >> b[i];
+    }
+
+    sort(a, a + n - 2);
+    sort(b, b + n - 2);
+
+    cin >> b2;
+
+    // we will call our recursive function
+
+
+
+
+
+
+}
+
+int main()
+{
+    int t;
+
+    cin >> t;
+
+    while (t-- > 0)
+    {
+        solve();
+    }
+}
