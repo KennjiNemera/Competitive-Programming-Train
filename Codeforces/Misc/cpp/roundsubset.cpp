@@ -6,106 +6,75 @@ using namespace std;
 
 const int MAXN = 201;
 int arr[MAXN][2];
-int dp[MAXN][MAXN][2];
+int dp[2][MAXN][6001];
+int d3 = 0;
 
-void fact(ll a, int i)
-{
-    int lo = 0;
-    int hi = 45;
-
-    int c1 = 0, c2 = 0;
-    
-    while (lo <= hi)
-    {
-        int mid = (lo + hi) / 2;
-
-        if (!(a % (ll)pow(2, mid)))
-        {
-            c1 = mid;
-            lo = mid + 1;
-        } else {
-            hi = mid - 1;
-        }
-    }
-
-    a /= (1 << c1);
-
-    lo = 0;
-    hi = 30;
-
-    while (lo <= hi)
-    {
-        int mid = (lo + hi) / 2;
-
-        if (!(a % (ll)pow(5, mid)))
-        {
-            c2 = mid;
-            lo = mid + 1;
-        } else hi = mid - 1;
-    }
-
-    arr[i][0] = c1;
-    arr[i][1] = c2;
-}
 
 int main()
 {
     int n, k;
 
+    ios_base::sync_with_stdio(0); cin.tie(0);
+
     cin >> n >> k;
 
-    for (int i = 0; i < n; i++)
-    {
-        long long a;
-
-        cin >> a;
-
-        fact(a, i);
+    vector <long long> a (n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    for (int i = 0; i < n; i++) {
+        long long v = a[i];
+        while (!(v % 5)) {
+            v /= 5;
+            d3++;
+        }
     }
 
     int ans = 0;
 
+    for (int i = 0; i < MAXN; i++)
+    {
+        for (int j = 0; j <= 6000; j++)
+        {
+            dp[0][i][j] = dp[1][i][j] = -1e9;
+        }        
+    }
+
+    dp[0][0][0] = dp[0][1][0] = 0;
+
     for (int i = 1; i <= n; i++)
     {
-        for (int j = 1; j <= k; j++)
+        int fs = 0, es = 0;
+        long long v = a[i - 1];
+        while (!(v % 2)) {
+            v /= 2;
+            es++;
+        }
+        while (!(v % 5)) {
+            v /= 5;
+            fs++;
+        }
+        for (int j = 1; j <= min(k,i); j++)
         {
-
-            dp[i][j][0] = dp[i-1][j][0];
-            dp[i][j][1] = dp[i-1][j][1];
-
-            int a = 0, b = 0;
-
-            // s1 refers to ignoring item i
-            for (int m = 0; m < i; m++)
-            {            
-                // s2 refers to adding onto the previous maxstate with one less item
-                int s2a = dp[m][j-1][0] + arr[i-1][0];
-                int s2b = dp[m][j-1][1] + arr[i-1][1];
-
-                if (min(a,b) <= min(s2a, s2b))
-                {
-                    a = max(a, s2a);
-                    b = max(s2b, b);     
-                }          
+            for (int z = 0; z <= d3; z++)
+            {
+                dp[1][j][z] = max(dp[0][j][z], dp[1][j][z]);
+                if (z >= fs) {
+                    dp[1][j][z] = max(dp[0][j-1][z - fs] + es, dp[1][j][z]);
+                }
             }
-
-            if (min(a,b) >= min(dp[i][j][0], dp[i][j][1]))
-                    {
-                        dp[i][j][0] = a;
-                        dp[i][j][1] = b;
-                    }
-
-            ans = max(ans, min(dp[i][j][0], dp[i][j][1]));
+        }
+        
+        for (int s = 1; s <= k; s++)
+        {
+            for (int z = 0; z <= d3; z++)
+            {
+                dp[0][s][z] = dp[1][s][z]; 
+            }
         }
     }
 
-    for (int i = 0; i <= n; i++)
+    for (int z = 0; z <= d3; z++)
     {
-        for (int j = 0; j <= k; j++)
-        {
-            cout << "[" << dp[i][j][0] << "," << dp[i][j][1] << "] ";
-        }
-        cout << endl;
+        ans = max(ans, min(z, dp[0][k][z]));
     }
 
     cout << ans << "\n";
