@@ -1,3 +1,4 @@
+#include "dreaming.h"
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -32,6 +33,7 @@ void dfs(int v, int p)
 {
     if (vis[v]) return;
     comp.pb(v);
+    vis[v] = 1;
 
     dist[v][0] = {-1, 0};
     dist[v][1] = {-1, 0};
@@ -39,21 +41,24 @@ void dfs(int v, int p)
     // we want to store the 2 longest distances from node v to a leaf
     for (pi child : adj[v])
     {
+        // store the parent of the current node and the length of the edge between them
         if (child.f == p) {
             par[v] = {p, child.s};   
             continue;
         }
+
+        // process the child of the current node so that we can use it's information
         dfs(child.f, v);
 
-        int prop = dist[child.f][0].s + child.s;
+        int prop = dist[child.f][0].s + child.s; // get the max dist to leaf through child adj[v][i]
+        
+        // store the two maximum lengths from node v through a child
         if (prop > dist[v][1].s)
         {
             if (prop >= dist[v][0].s)
             {
-                // shift
-                pi temp = dist[v][0];
-                dist[v][0] = {child.f, prop};
-                dist[v][1] = temp;
+                dist[v][1] = dist[v][0];
+                dist[v][0] = {child.f , prop};
             } else {
                 // replace max2
                 dist[v][1] = {child.f, prop};
@@ -74,9 +79,13 @@ int travelTime(int N, int M, int L, int A[], int B[], int T[])
         adj[B[i]].pb({A[i], T[i]});
     }
 
+    int diam = 0;
+
     // we can perform dfs on this for each component
     for (int i = 0; i < N; i++)
     {
+        // go through all the nodes / entry points for components
+        int compmax = 0;
         if (!vis[i]) 
         {
             // perform DFS to find 2 Max Lengths
@@ -86,19 +95,49 @@ int travelTime(int N, int M, int L, int A[], int B[], int T[])
             // process each node in the component and query for the node with the min max dist
             int imax = INF;
 
-            for (int node : comp)
+            //cout << "starting node: " << i << "\n";
+
+            for (int j = 0; j < comp.size() ; j++)
             {
+                int node = comp[j]; 
+
                 int len = dist[node][0].s;
                 
                 if (node != i)
                 {
                     // add parent distance
-                    if (dist[par[node].f][0].f == node) len = max(len, dist[par[node].f][1].s + par[node].s);
-                    else len = max(len, dist[par[node].f][0].s + par[node].s);
+                    int d;
+
+                    if (dist[par[node].f][0].f == node) {
+                        d = dist[par[node].f][1].s + par[node].s;
+                    } else {
+                        d = dist[par[node].f][0].s + par[node].s;
+                    }
+
+                    if (d > dist[node][1].s)
+                    {
+                        if (d >= dist[node][0].s)
+                        {
+                            dist[node][1] = dist[node][0];
+                            dist[node][0] = {par[node].f, d};
+                        } else {
+                            dist[node][1] = {par[node].f, d};
+                        }
+                    }
+
+                    len = dist[node][0].s;
+
+                    compmax = max(compmax, dist[node][0].s + dist[node][1].s);
                 }
 
-                imax = min(imax, len);    
+                imax = min(imax, len); 
+
+                // print out the distances for each of our nodes
+               // cout << node << " : { " << dist[node][0].f << ", " << dist[node][0].s << "} {" << dist[node][1].f << "," << dist[node][1].s << "}\n"; 
+
             }
+
+            diam = max(diam, compmax);
 
             totals.pb(imax);
             comp.clear();
@@ -110,32 +149,49 @@ int travelTime(int N, int M, int L, int A[], int B[], int T[])
 
     int ans;
 
+    //cout << "Totals size: " << to_string(totals.size()) << "\n";
+    //for (int i = 0; i < totals.size(); i++) cout << "t" << i << ": " << totals[i] << "\n";
+
     if (totals.size() > 2) ans = max(L + totals[0] + totals[1], 2 * L + totals[1] + totals[2]);
     else if (totals.size() == 2) ans = L + totals[0] + totals[1];
     else ans = totals[0]; 
 
-    return ans;
+    return max(ans, diam);
 }
 
-void solve()
-{
-    // take in input and call travelTime
-}
-
-int main()
-{
-    auto start = chrono::high_resolution_clock::now();
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-    int t = 1;
-    // cin >> t;
-    for(int i = 0; i < t; i++){
-        // cout << "Case #" << i + 1 << ": ";
-        solve();
-    }
-    auto stop = chrono::high_resolution_clock::now(); 
-    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start); 
-    // cout <<"Time taken : "<<duration.count() <<" milliseconds\n";
-}
+//void solve()
+//{
+//    // take in input and call travelTime
+//    int n, m, l;
+//
+//    cin >> n >> m >> l;
+//    
+//    int A[m], B[m], T[m];
+//
+//    for (int i = 0; i < m; i++) cin >> A[i] >> B[i] >> T[i];
+//    
+//    cout << travelTime(n, m, l, A, B, T) << "\n";
+//
+//    return;
+//}
+//
+//int main()
+//{
+//    auto start = chrono::high_resolution_clock::now();
+//    ios_base::sync_with_stdio(false);
+//    cin.tie(0);
+//    cout.tie(0);
+//
+//    freopen("input.in", "r", stdin);
+//   
+//    int t = 1;
+//    // cin >> t;
+//    for(int i = 0; i < t; i++){
+//        // cout << "Case #" << i + 1 << ": ";
+//        solve();
+//    }
+//    auto stop = chrono::high_resolution_clock::now(); 
+//    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start); 
+//    // cout <<"Time taken : "<<duration.count() <<" milliseconds\n";
+//}
 
